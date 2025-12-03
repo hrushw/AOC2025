@@ -20,25 +20,21 @@ int part1(void) {
 }
 
 int part2(void) {
-	ull rf, rc, r, rl, ru, sum = 0;
+	ull rf, rc, r, rl, ru, sum = 0, p10;
 
-	while(scanf("%llu-%llu,", &rf, &rc) != EOF) {
-		for(r = rf; r <= rc; ++r) {
-			for(ull p10 = 10; (p10 - 1) < r; p10 *= 10) {
+	while(scanf("%llu-%llu,", &rf, &rc) != EOF)
+		for(r = rf; r <= rc; ++r)
+			for(p10 = 10; p10 < r; p10 *= 10) {
 				rl = r % p10;
 				ru = r / p10;
 
-				if(!rl) continue;
 				if(!(rl / (p10 / 10))) continue;
 				while((ru % p10) == rl) ru /= p10;
 				if(ru) continue;
 
-				// printf("Found: %llu in range { %llu - %llu }\n", r, rf, rc);
 				sum += r;
 				break;
 			}
-		}
-	}
 
 	printf("Sum evaluates to: %llu\n", sum);
 	return 0;
