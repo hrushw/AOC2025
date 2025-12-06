@@ -1,31 +1,19 @@
 #include <stdio.h>
 
 enum { MAXLINES_ = 16 };
-int part1(char* lines[], char* shlines[], int nlines) {
-	unsigned long long total = 0;
-	unsigned long long ans = 0;
+
+void _p1math (
+	char* shlines[], unsigned long long *ans,
+	int nlines, char op
+) {
 	unsigned int num = 0;
 	unsigned int i;
-
 	int off = 0;
-	char op = 0;
-	while(sscanf(shlines[nlines], "%c %n", &op, &off) != EOF) {
-		shlines[nlines] += off;
-
-		ans = (op == '*');
-		for(i = 0; i < nlines; ++i) {
-			sscanf(shlines[i], "%u %n", &num, &off);
-			ans = ((op == '*') ? (ans * num) : (ans + num));
-			shlines[i] += off;
-		}
-
-		if(total + ans < total)
-			return fprintf(stderr, "Error: Integer overflow!\n"), -1;
-		total += ans;
+	for(i = 0; i < nlines; ++i) {
+		sscanf(shlines[i], "%u %n", &num, &off);
+		shlines[i] += off;
+		*ans = ((op == '*') ? ((*ans) * num) : ((*ans) + num));
 	}
-
-	printf("Total: %llu\n", total);
-	return 0;
 }
 
 int getvnum(char* shlines[], unsigned int *n, int nlines) {
@@ -44,28 +32,13 @@ int getvnum(char* shlines[], unsigned int *n, int nlines) {
 	return ret;
 }
 
-int part2(char* lines[], char* shlines[], int nlines) {
-	unsigned long long total = 0;
-	unsigned long long ans = 0;
+void _p2math (
+	char* shlines[], unsigned long long *ans,
+	int nlines, char op
+) {
 	unsigned int num = 0;
-	unsigned int i;
-
-	int off = 0;
-	char op = 0;
-	while(sscanf(shlines[nlines], "%c %n", &op, &off) != EOF) {
-		shlines[nlines] += off;
-		ans = (op == '*');
-
-		while(!getvnum(shlines, &num, nlines))
-			ans = ((op == '*') ? (ans * num) : (ans + num));
-
-		if(total + ans < total)
-			return fprintf(stderr, "Error: Integer overflow!\n"), -1;
-		total += ans;
-	}
-
-	printf("Total: %llu\n", total);
-	return 0;
+	while(!getvnum(shlines, &num, nlines))
+		*ans = ((op == '*') ? ((*ans) * num) : ((*ans) + num));
 }
 
 int main(void) {
@@ -83,5 +56,23 @@ int main(void) {
 	}
 	nlines -= 1;
 
-	return part2(lines, shlines, nlines);
+	unsigned long long total = 0;
+	unsigned long long ans = 0;
+
+	int off = 0;
+	char op = 0;
+	while(sscanf(shlines[nlines], "%c %n", &op, &off) != EOF) {
+		shlines[nlines] += off;
+		ans = (op == '*');
+
+		/* change for part 1 */
+		_p2math(shlines, &ans, nlines, op);
+
+		if(total + ans < total)
+			return fprintf(stderr, "Error: Integer overflow!\n"), -1;
+		total += ans;
+	}
+
+	printf("Total: %llu\n", total);
+	return 0;
 }
